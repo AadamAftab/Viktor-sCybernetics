@@ -7,6 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-cyan: #00ffff;
+            --primary-yellow: #fdf001;
+            --primary-red: #ff003c;
+            --primary-bg: #0a0a0f;
+            --container-bg: rgba(20, 0, 20, 0.6);
+            --border-color: var(--primary-cyan);
+            --accent-color: var(--primary-yellow);
+        }
+
         /* Custom Cursors */
         body {
             /* Default tech cursor */
@@ -20,18 +30,24 @@
 
         body {
             font-family: 'Share Tech Mono', monospace;
-            background-color: #0a0a0f;
-            color: #00ffff;
+            background-color: var(--primary-bg);
+            color: var(--primary-cyan);
             text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
             /* Glitchy scanlines effect */
             background-image: linear-gradient(rgba(10, 10, 15, 0.75) 50%, rgba(10, 10, 15, 0.75) 50%), linear-gradient(0deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
             background-size: 100% 100%, 100% 2px;
-            animation: scanline 0.2s linear infinite;
+            animation: scanline 0.2s linear infinite, flicker 5s linear infinite;
         }
-
+        
         @keyframes scanline {
             0% { background-position: 0 0, 0 0; }
             100% { background-position: 0 0, 0 2px; }
+        }
+
+        @keyframes flicker {
+            0% { opacity: 1; }
+            50% { opacity: 0.98; }
+            100% { opacity: 1; }
         }
 
         .font-orbitron {
@@ -40,45 +56,218 @@
             text-transform: uppercase;
         }
 
-        .glitch-border {
-            border: 2px solid #ff00ff;
-            box-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff inset;
-            transition: all 0.2s;
+        /* New Cyberpunk UI Box Style */
+        .cyber-box {
+            background: var(--container-bg);
+            border: 2px solid var(--border-color);
+            border-image: linear-gradient(to bottom, var(--primary-cyan), rgba(0, 255, 255, 0.3)) 1;
+            clip-path: polygon(
+                0% 15px, /* top left corner (cut) */
+                15px 0%, 
+                calc(100% - 15px) 0%, 
+                100% 15px, /* top right corner (cut) */
+                100% calc(100% - 15px), 
+                calc(100% - 15px) 100%, 
+                15px 100%, 
+                0% calc(100% - 15px) /* bottom left corner (cut) */
+            );
+            padding: 1.5rem;
+            position: relative;
+            box-shadow: 0 0 15px rgba(0, 255, 255, 0.3) inset, 0 0 10px rgba(0, 255, 255, 0.2);
         }
 
-        .glitch-border:hover {
+        /* Add corner elements */
+        .cyber-box::before, .cyber-box::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: transparent;
+            border-color: var(--accent-color); /* Bright yellow corners */
+            border-style: solid;
+            box-shadow: 0 0 10px var(--accent-color);
+        }
+        .cyber-box::before {
+            top: -4px;
+            left: -4px;
+            border-width: 3px 0 0 3px;
+        }
+        .cyber-box::after {
+            bottom: -4px;
+            right: -4px;
+            border-width: 0 3px 3px 0;
+        }
+        
+        .cyber-box-error {
+            border-color: var(--primary-red);
+            border-image: linear-gradient(to bottom, var(--primary-red), rgba(255, 0, 60, 0.3)) 1;
+            box-shadow: 0 0 15px rgba(255, 0, 60, 0.3) inset, 0 0 10px rgba(255, 0, 60, 0.2);
+        }
+        .cyber-box-error::before, .cyber-box-error::after {
+            border-color: var(--primary-red);
+            box-shadow: 0 0 10px var(--primary-red);
+        }
+
+        /* New Cyberpunk Button Style */
+        .cyber-button {
+            background: rgba(253, 240, 1, 0.2); /* Yellow tint */
+            border: 2px solid var(--accent-color);
+            color: var(--accent-color);
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            padding: 0.75rem 1.5rem;
+            clip-path: polygon(
+                0% 8px, 
+                8px 0%, 
+                calc(100% - 8px) 0%, 
+                100% 8px, 
+                100% calc(100% - 8px), 
+                calc(100% - 8px) 100%, 
+                8px 100%, 
+                0% calc(100% - 8px)
+            );
+            transition: background-color 0.2s, color 0.2s, text-shadow 0.2s;
+        }
+        .cyber-button:hover {
+            background: var(--accent-color);
+            color: #0a0a0f;
+            text-shadow: none;
             animation: glitch-anim 0.1s infinite alternate;
         }
+        
+        .cyber-button-red {
+            background: rgba(255, 0, 60, 0.2);
+            border-color: var(--primary-red);
+            color: var(--primary-red);
+        }
+        .cyber-button-red:hover {
+            background: var(--primary-red);
+            color: #fff;
+            text-shadow: 0 0 5px #fff;
+        }
 
+        .cyber-button-cyan {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: var(--primary-cyan);
+            color: var(--primary-cyan);
+        }
+        .cyber-button-cyan:hover {
+            background: var(--primary-cyan);
+            color: #0a0a0f;
+            text-shadow: none;
+        }
+        
+        /* Header HUD Buttons */
+        .hud-button {
+            border: 2px solid var(--border-color);
+            background: rgba(0, 255, 255, 0.1);
+            color: var(--primary-cyan);
+            padding: 0.5rem;
+            clip-path: polygon(0% 8px, 8px 0%, 100% 0%, 100% 100%, 0% 100%);
+            transition: all 0.2s;
+        }
+        .hud-button:hover {
+            background: var(--primary-cyan);
+            color: #0a0a0f;
+        }
+        #sign-out-button.hud-button {
+            border-color: var(--primary-red);
+            background: rgba(255, 0, 60, 0.1);
+            color: var(--primary-red);
+        }
+        #sign-out-button.hud-button:hover {
+            background: var(--primary-red);
+            color: #fff;
+        }
+        
+        /* Glitch Animation for Buttons */
         @keyframes glitch-anim {
             0% {
                 transform: skew(-0.5deg);
-                box-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff inset, 2px 2px 0 #00ffff, -2px -2px 0 #ff00ff;
+                text-shadow: 2px 2px 0 var(--primary-cyan), -2px -2px 0 var(--primary-red);
             }
             100% {
                 transform: skew(0.5deg);
-                box-shadow: 0 0 12px #ff00ff, 0 0 18px #ff00ff inset, -2px -2px 0 #00ffff, 2px 2px 0 #ff00ff;
+                text-shadow: -2px -2px 0 var(--primary-cyan), 2px 2px 0 var(--primary-red);
             }
+        }
+        
+        /* Header Glitch Text */
+        .glitch-text {
+            color: #fff;
+            position: relative;
+            text-shadow: 0 0 5px var(--primary-cyan), 0 0 10px var(--primary-red);
+        }
+        .glitch-text::after, .glitch-text::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: #0a0a0f;
+            overflow: hidden;
+            clip: rect(0, 900px, 0, 0);
+        }
+        .glitch-text::after {
+            content: attr(data-text);
+            left: 2px;
+            text-shadow: -1px 0 var(--primary-red);
+            animation: glitch-text-anim-1 2s infinite linear alternate-reverse;
+        }
+        .glitch-text::before {
+            content: attr(data-text);
+            left: -2px;
+            text-shadow: 1px 0 var(--primary-cyan);
+            animation: glitch-text-anim-2 3s infinite linear alternate-reverse;
+        }
+        @keyframes glitch-text-anim-1 {
+            0% { clip: rect(42px, 9999px, 44px, 0); } 10% { clip: rect(12px, 9999px, 60px, 0); } 20% { clip: rect(50px, 9999px, 10px, 0); } 30% { clip: rect(30px, 9999px, 90px, 0); } 40% { clip: rect(25px, 9999px, 65px, 0); } 50% { clip: rect(50px, 9999px, 80px, 0); } 60% { clip: rect(70px, 9999px, 10px, 0); } 70% { clip: rect(85px, 9999px, 40px, 0); } 80% { clip: rect(60px, 9999px, 70px, 0); } 90% { clip: rect(30px, 9999px, 80px, 0); } 100% { clip: rect(10px, 9999px, 65px, 0); }
+        }
+        @keyframes glitch-text-anim-2 {
+            0% { clip: rect(65px, 9999px, 80px, 0); } 10% { clip: rect(70px, 9999px, 20px, 0); } 20% { clip: rect(10px, 9999px, 30px, 0); } 30% { clip: rect(90px, 9999px, 45px, 0); } 40% { clip: rect(40px, 9999px, 70px, 0); } 50% { clip: rect(80px, 9999px, 30px, 0); } 60% { clip: rect(20px, 9999px, 90px, 0); } 70% { clip: rect(50px, 9999px, 60px, 0); } 80% { clip: rect(10px, 9999px, 40px, 0); } 90% { clip: rect(80px, 9999px, 75px, 0); } 100% { clip: rect(40px, 9999px, 10px, 0); }
         }
 
         .product-card {
             background-color: rgba(10, 30, 40, 0.7);
-            border: 2px solid #00ffff;
             backdrop-filter: blur(5px);
-            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 10px rgba(0, 255, 255, 0.5) inset;
+            clip-path: polygon(
+                0% 10px, /* top left corner (cut) */
+                10px 0%, 
+                calc(100% - 10px) 0%, 
+                100% 10px, /* top right corner (cut) */
+                100% calc(100% - 10px), 
+                calc(100% - 10px) 100%, 
+                10px 100%, 
+                0% calc(100% - 10px) /* bottom left corner (cut) */
+            );
+            border: 2px solid var(--border-color);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
         }
         
         .product-card .img-container {
             background-color: #000;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+            border-bottom: 2px solid var(--border-color);
         }
 
         .product-card img {
-            border-bottom: 2px solid #00ffff;
-            object-fit: contain; /* Changed from object-cover */
+            border-bottom: 0;
+            object-fit: contain;
         }
         
         .add-to-cart-button {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid var(--primary-cyan);
+            color: var(--primary-cyan);
+            font-family: 'Orbitron', sans-serif;
+            text-transform: uppercase;
+            padding: 0.5rem 1rem;
+            clip-path: polygon(0% 8px, 8px 0%, 100% 0%, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0% 100%);
             transition: all 0.2s;
+        }
+        .add-to-cart-button:hover {
+            background: var(--primary-cyan);
+            color: #0a0a0f;
+            text-shadow: none;
         }
         
         /* Custom scrollbar for modals */
@@ -89,22 +278,22 @@
         #cart-items-list::-webkit-scrollbar-track,
         #profile-content::-webkit-scrollbar-track {
             background: #0a0a0f;
-            border-left: 1px solid #00ffff;
+            border-left: 1px solid var(--border-color);
         }
         #cart-items-list::-webkit-scrollbar-thumb,
         #profile-content::-webkit-scrollbar-thumb {
-            background: #ff00ff;
-            border: 1px solid #00ffff;
+            background: var(--accent-color);
+            border: 1px solid var(--border-color);
         }
         #cart-items-list::-webkit-scrollbar-thumb:hover,
         #profile-content::-webkit-scrollbar-thumb:hover {
-            background: #00ffff;
-            border-color: #ff00ff;
+            background: var(--primary-cyan);
+            border-color: var(--accent-color);
         }
 
         .side-effect {
-            color: #ff4d4d; /* Red for warnings */
-            text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
+            color: var(--primary-red);
+            text-shadow: 0 0 5px rgba(255, 0, 60, 0.7);
             font-weight: bold;
         }
         
@@ -118,17 +307,27 @@
         .lifepath-card {
             position: relative;
             height: 500px;
-            border: 4px solid transparent;
+            border: 2px solid var(--border-color);
             background-size: cover;
             background-position: center;
             overflow: hidden;
             transition: transform 0.3s ease, border-color 0.3s ease;
+            clip-path: polygon(
+                0% 20px, 
+                20px 0%, 
+                calc(100% - 20px) 0%, 
+                100% 20px, 
+                100% calc(100% - 20px), 
+                calc(100% - 20px) 100%, 
+                20px 100%, 
+                0% calc(100% - 20px)
+            );
         }
         
         .lifepath-card:hover {
             transform: scale(1.03);
-            border-color: #ff00ff;
-            box-shadow: 0 0 20px #ff00ff, 0 0 30px #ff00ff inset;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 20px var(--accent-color), 0 0 30px var(--accent-color) inset;
         }
 
         .lifepath-card::after {
@@ -141,6 +340,22 @@
             background: linear-gradient(to top, rgba(10, 10, 15, 1) 0%, rgba(10, 10, 15, 0.8) 20%, transparent 60%);
             transition: background 0.3s ease;
         }
+
+        .lifepath-card::before {
+            content: '// FILE_ID_CORRUPTION //';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            z-index: 3;
+            color: var(--primary-red);
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 0.75rem;
+            opacity: 0.7;
+            animation: glitch-anim 0.5s infinite alternate;
+        }
+        .lifepath-card.lifepath-nomad::before { content: '// LIFEPATH: NOMAD //'; color: var(--accent-color); animation: none; }
+        .lifepath-card.lifepath-streetkid::before { content: '// LIFEPATH: STREETKID //'; color: var(--accent-color); animation: none; }
+        .lifepath-card.lifepath-corpo::before { content: '// LIFEPATH: CORPO //'; color: var(--accent-color); animation: none; }
         
         .lifepath-card:hover::after {
             background: linear-gradient(to top, rgba(10, 10, 15, 0.9) 0%, rgba(10, 10, 15, 0.6) 15%, transparent 50%);
@@ -158,7 +373,7 @@
         .lifepath-card h3 {
             font-size: 1.75rem;
             color: #fff;
-            text-shadow: 0 0 10px #ff00ff;
+            text-shadow: 0 0 10px var(--accent-color);
             margin-bottom: 0.5rem;
         }
 
@@ -193,6 +408,19 @@
         input[type=number] {
             -moz-appearance: textfield;
         }
+        
+        /* Profile Input Styling */
+        #profile-rep-input, #profile-balance-input {
+            background: rgba(0, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
+            padding-left: 0.5rem;
+        }
+        #profile-rep-input:disabled, #profile-balance-input:disabled {
+            background: rgba(100, 100, 100, 0.1);
+            border-color: #555;
+            color: #777;
+        }
 
     </style>
 </head>
@@ -200,14 +428,14 @@
 
     <!-- Sign-in Modal (Visible on load) -->
     <div id="signin-modal" class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-lg z-[100] flex items-center justify-center p-6">
-        <div class="glitch-border bg-black w-full max-w-md rounded-lg p-8 text-center">
+        <div class="cyber-box bg-black w-full max-w-md rounded-lg p-8 text-center">
             <h2 class="font-orbitron text-3xl mb-8 text-cyan-400">// INITIATE CONNECTION //</h2>
             <p class="text-gray-400 mb-8">Authenticate to access Viktor Vektor's terminal.</p>
             <div class="space-y-4">
-                <button id="load-profile-v" class="glitch-border font-orbitron text-lg px-6 py-3 bg-cyan-600 bg-opacity-50 hover:bg-opacity-100 text-white w-full">
+                <button id="load-profile-v" class="cyber-button cyber-button-cyan text-lg w-full">
                     LOAD PROFILE: V
                 </button>
-                <button id="continue-as-guest" class="glitch-border font-orbitron text-lg px-6 py-3 bg-gray-800 bg-opacity-50 hover:bg-opacity-100 text-white w-full">
+                <button id="continue-as-guest" class="cyber-button text-lg w-full">
                     CONTINUE AS GUEST
                 </button>
             </div>
@@ -225,14 +453,14 @@
         <!-- Header Buttons -->
         <div class="absolute top-0 right-0 mt-4 mr-4 flex gap-4">
             <!-- Profile Button -->
-            <button id="profile-button" title="View Profile" class="text-cyan-400 hover:text-white glitch-border px-4 py-2 flex items-center">
+            <button id="profile-button" title="View Profile" class="hud-button flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                 </svg>
             </button>
             
             <!-- Cart Button -->
-            <button id="cart-button" title="View Cart" class="text-cyan-400 hover:text-white glitch-border px-4 py-2 flex items-center">
+            <button id="cart-button" title="View Cart" class="hud-button flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
@@ -240,7 +468,7 @@
             </button>
             
             <!-- Sign Out Button -->
-            <button id="sign-out-button" title="Sign Out" class="text-pink-500 hover:text-white glitch-border px-4 py-2 flex items-center">
+            <button id="sign-out-button" title="Sign Out" class="hud-button flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                 </svg>
@@ -282,8 +510,8 @@
         <!-- Product Grid -->
         <section id="product-grid" class="hidden">
             <div class="flex justify-between items-center mb-8">
-                <h2 id="shop-title" class="text-3xl md:text-4xl text-center">// INVENTORY</h2>
-                <button id="back-button" class="glitch-border font-orbitron text-lg px-6 py-2 bg-black bg-opacity-50 hover:bg-opacity-100">
+                <h2 id="shop-title" class="text-3xl md:text-4xl text-center font-orbitron">// INVENTORY</h2>
+                <button id="back-button" class="cyber-button text-lg">
                     &lt; BACK
                 </button>
             </div>
@@ -294,7 +522,7 @@
         
         <!-- Global Notification -->
         <div id="notification-toast" class="hidden fixed bottom-10 right-10 z-50">
-            <!-- Message will be injected here -->
+            <!-- Message will be injected here. It will use cyber-box styling. -->
         </div>
 
     </main>
@@ -313,7 +541,7 @@
 
     <!-- Profile Modal -->
     <div id="profile-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 backdrop-blur-lg z-50 flex items-center justify-center p-6">
-        <div class="glitch-border bg-black w-full max-w-lg rounded-lg overflow-hidden p-8 relative">
+        <div class="cyber-box bg-black w-full max-w-lg rounded-lg overflow-hidden p-8 relative">
             <!-- Close Button -->
             <button id="close-profile-button" class="absolute top-4 right-6 text-cyan-400 hover:text-white text-4xl">&times;</button>
             
@@ -329,18 +557,18 @@
                     </div>
                     <div class="p-4 bg-gray-900 rounded-md border border-gray-700">
                         <span class="text-gray-500 text-sm font-orbitron">REP / ADDRESS:</span>
-                        <input type="text" id="profile-rep-input" value="HEYWOOD (RISING)" class="bg-gray-800 border border-cyan-400 text-2xl text-white p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-pink-500 font-sans disabled:opacity-50 disabled:cursor-not-allowed">
+                        <input type="text" id="profile-rep-input" value="HEYWOOD (RISING)" class="bg-gray-800 text-2xl text-white p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-pink-500 font-sans disabled:opacity-50">
                     </div>
                     <div class="p-4 bg-gray-900 rounded-md border border-gray-700">
                         <span class="text-gray-500 text-sm font-orbitron">PREFERRED VENDOR:</span>
                         <p class="text-2xl text-white">VIKTOR VEKTOR</p>
                     </div>
-                    <!-- Added more content for scrolling -->
+                    
                     <div id="profile-balance-container" class="p-4 bg-gray-900 rounded-md border border-gray-700">
                         <span class="text-gray-500 text-sm font-orbitron">BALANCE (EDDIES):</span>
                         <div class="flex items-center">
                             <span class="text-2xl text-green-400 mr-2">€$</span>
-                            <input type="number" id="profile-balance-input" value="1200" class="bg-gray-800 border border-cyan-400 text-2xl text-green-400 p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-pink-500 font-sans disabled:opacity-50 disabled:cursor-not-allowed">
+                            <input type="number" id="profile-balance-input" value="1200" class="bg-gray-800 text-2xl text-green-400 p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-pink-500 font-sans disabled:opacity-50">
                         </div>
                     </div>
                     <div id="profile-notable-ware" class="p-4 bg-gray-900 rounded-md border border-gray-700">
@@ -359,7 +587,7 @@
 
     <!-- Cart Modal -->
     <div id="cart-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 backdrop-blur-lg z-50 flex items-center justify-center p-6">
-        <div class="glitch-border bg-black w-full max-w-2xl rounded-lg overflow-hidden p-8 relative">
+        <div class="cyber-box bg-black w-full max-w-2xl rounded-lg overflow-hidden p-8 relative">
             <!-- Close Button -->
             <button id="close-cart-button" class="absolute top-4 right-6 text-cyan-400 hover:text-white text-4xl">&times;</button>
             
@@ -376,15 +604,42 @@
                     <span id="cart-total" class="font-orbitron text-3xl text-green-400">€$ 0</span>
                 </div>
                 <div class="flex justify-between gap-4">
-                    <button id="clear-cart-button" class="glitch-border font-orbitron text-lg px-6 py-2 bg-red-800 bg-opacity-50 hover:bg-opacity-100 text-white w-1/2">
+                    <button id="clear-cart-button" class="cyber-button cyber-button-red text-lg w-1/2">
                         CLEAR CART
                     </button>
-                    <button id="checkout-button" class="glitch-border font-orbitron text-lg px-6 py-2 bg-cyan-600 bg-opacity-50 hover:bg-opacity-100 text-white w-1/2">
+                    <button id="checkout-button" class="cyber-button cyber-button-cyan text-lg w-1/2">
                         CHECK OUT
                     </button>
                 </div>
                 <p class="text-xs text-gray-600 text-center mt-4">// Checkout is... conceptual. Vik ain't set up online payments. //</p>
             </div>
+        </div>
+    </div>
+
+    <!-- Thank You Modal -->
+    <div id="thank-you-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 backdrop-blur-lg z-[100] flex items-center justify-center p-6">
+        <div class="cyber-box bg-black w-full max-w-md rounded-lg p-8 text-center relative">
+            <button id="close-thanks-button" class="absolute top-4 right-6 text-cyan-400 hover:text-white text-4xl">&times;</button>
+            <h2 class="font-orbitron text-3xl mb-6 text-cyan-400">// TRANSACTION COMPLETE //</h2>
+            <p class="text-white text-lg mb-4">Thanks, choom. The eddies are received.</p>
+            <p class="text-gray-400 mb-8">Viktor will have your new chrome ready for install. Don't be late.</p>
+            <button id="thanks-ok-button" class="cyber-button cyber-button-cyan text-lg w-full">
+                BACK TO TERMINAL
+            </button>
+        </div>
+    </div>
+
+    <!-- Insufficient Funds Modal -->
+    <div id="insufficient-funds-modal" class="hidden fixed inset-0 bg-black bg-opacity-90 backdrop-blur-lg z-[100] flex items-center justify-center p-6">
+        <div class="cyber-box cyber-box-error bg-black w-full max-w-md rounded-lg p-8 text-center relative">
+            <button id="close-funds-button" class="absolute top-4 right-6 text-cyan-400 hover:text-white text-4xl">&times;</button>
+            <h2 class="font-orbitron text-3xl mb-6 text-red-500">// TRANSACTION FAILED //</h2>
+            <p class="text-white text-lg mb-4">Insufficient Eddies!</p>
+            <p class="text-gray-400 mb-2">Your Balance: <span id="funds-modal-balance" class="text-green-400"></span></p>
+            <p class="text-gray-400 mb-8">Required: <span id="funds-modal-required" class="text-red-400"></span></p>
+            <button id="funds-ok-button" class="cyber-button cyber-button-cyan text-lg w-full">
+                OKAY
+            </button>
         </div>
     </div>
 
@@ -724,7 +979,7 @@
                     price: "€$ 14,500",
                     rawPrice: 14500,
                     description: "Flashy chrome ankle actuators, supposedly 'calibrated' for a double jump. Looks preem, even if the second jump is just a small hop.",
-                    image: "https://static.wikia.nocookie.net/cyberpunk/images/9/96/ReinforcedMuscles.png/revision/latest?cb=20230926075549",
+                    image: "httpsfs://static.wikia.nocookie.net/cyberpunk/images/9/96/ReinforcedMuscles.png/revision/latest?cb=20230926075549",
                     sideEffects: "'Double jump' feature fails 40% of the time. Chrome finish scratches easily. Makes a 'charging' sound that can't be turned off."
                 },
                 {
@@ -906,7 +1161,7 @@
                     price: "€$ 62,000",
                     rawPrice: 62000,
                     description: "Corporate-grade myomer-laced tendons. Provides silent, powerful, and precise motor control. Approved for executive use.",
-                    image: "https://static.wikia.nocookie.net/cyberpunk/images/6/65/JenkinsTendons.png/revision/latest?cb=20230926081535",
+                    image: "httpsS://static.wikia.nocookie.net/cyberpunk/images/6/65/JenkinsTendons.png/revision/latest?cb=20230926081535",
                     sideEffects: "Requires Arasaka firmware. Biometric feedback is sent to HR. Any 'unauthorized' exertion will be logged."
                 },
                 {
@@ -933,7 +1188,7 @@
                     price: "€$ 115,000",
                     rawPrice: 115000,
                     description: "Top-of-the-line, nanite-infused plating. Flexible, resilient, and completely invisible. Executive protection.",
-                    image: "https://static.wikia.nocookie.net/cyberpunk/images/a/ab/NanoTechPlates.png/revision/latest?cb=20230929180320",
+                    image: "httpsD://static.wikia.nocookie.net/cyberpunk/images/a/ab/NanoTechPlates.png/revision/latest?cb=20230929180320",
                     sideEffects: "Requires Arasaka firmware. Constantly monitors biometrics for 'damage reports'. Any impacts are logged."
                 },
                 {
@@ -1013,6 +1268,18 @@
             const profileLastVisit = document.getElementById('profile-last-visit');
             const signOutButton = document.getElementById('sign-out-button');
             
+            // Thank You Modal Elements
+            const thankYouModal = document.getElementById('thank-you-modal');
+            const closeThanksButton = document.getElementById('close-thanks-button');
+            const thanksOkButton = document.getElementById('thanks-ok-button');
+
+            // Insufficient Funds Modal Elements
+            const insufficientFundsModal = document.getElementById('insufficient-funds-modal');
+            const closeFundsButton = document.getElementById('close-funds-button');
+            const fundsOkButton = document.getElementById('funds-ok-button');
+            const fundsModalBalance = document.getElementById('funds-modal-balance');
+            const fundsModalRequired = document.getElementById('funds-modal-required');
+            
             // --- FUNCTIONS ---
             
             // Function to show a notification
@@ -1020,11 +1287,11 @@
                 if (notificationTimeout) {
                     clearTimeout(notificationTimeout);
                 }
-                const borderColor = isError ? 'border-red-500' : 'border-green-500';
-                const bgColor = isError ? 'bg-red-800' : 'bg-green-800';
-                const textColor = isError ? 'text-red-100' : 'text-green-100';
+                const borderColor = isError ? 'border-red-500' : 'border-yellow-400';
+                const bgColor = isError ? 'bg-red-900' : 'bg-yellow-900';
+                const textColor = isError ? 'text-red-100' : 'text-yellow-100';
 
-                notificationToast.innerHTML = `<div class="glitch-border ${borderColor} ${bgColor} ${textColor} font-orbitron p-4 rounded-lg shadow-lg">${message}</div>`;
+                notificationToast.innerHTML = `<div class="cyber-box ${isError ? 'cyber-box-error' : ''} p-4">${message}</div>`;
                 notificationToast.classList.remove('hidden');
                 
                 notificationTimeout = setTimeout(() => {
@@ -1036,7 +1303,7 @@
             function createProductCard(product, path) {
                 return `
                     <div class="product-card rounded-lg overflow-hidden flex flex-col">
-                        <div class="img-container h-48 w-full overflow-hidden bg-black">
+                        <div class="img-container h-48 w-full overflow-hidden">
                             <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/600x400/333/FFF?text=IMAGE_CORRUPTED'">
                         </div>
                         <div class="p-6 flex flex-col flex-grow">
@@ -1045,10 +1312,10 @@
                             <p class="side-effect mb-4">!! SIDE EFFECTS: ${product.sideEffects}</p>
                             <div class="flex justify-between items-center mt-auto">
                                 <span class="price text-left">${product.price}</span>
-                                <button class="add-to-cart-button glitch-border font-orbitron text-sm px-4 py-2 bg-black bg-opacity-50 hover:bg-opacity-100 text-cyan-400 hover:text-white"
+                                <button class="add-to-cart-button"
                                     data-id="${product.id}" 
                                     data-path="${path}">
-                                    + ADD
+                                    + ADD TO RIG
                                 </button>
                             </div>
                         </div>
@@ -1170,6 +1437,8 @@
                 // Ensure modals are closed and scroll lock is on for the sign-in modal
                 closeCart();
                 closeProfile();
+                closeThanksModal(); // Close this too
+                closeInsufficientFundsModal(); // Close this too
                 document.body.classList.add('modal-open');
             }
 
@@ -1184,7 +1453,7 @@
                 
                 profileModal.classList.add('hidden');
                 // Only remove modal-open if another modal isn't open
-                if (cartModal.classList.contains('hidden') && signinModal.classList.contains('hidden')) {
+                if (!isAnyModalOpen()) {
                     document.body.classList.remove('modal-open');
                 }
                 
@@ -1205,7 +1474,7 @@
                     cart.push({ ...item, quantity: 1 });
                 }
                 updateCart();
-                showNotification(`Added: ${item.name}`);
+                showNotification(`// ITEM ADDED: ${item.name} //`);
             }
 
             function getCartTotal() {
@@ -1218,7 +1487,7 @@
                     cartItemsList.innerHTML = '<p class="text-gray-500 text-center">Your cart is empty, choom.</p>';
                 } else {
                     cartItemsList.innerHTML = cart.map(item => `
-                        <div class="flex justify-between items-center text-white mb-4 p-2 bg-gray-900 rounded">
+                        <div class="flex justify-between items-center text-white mb-4 p-2 bg-gray-900 rounded border border-cyan-900">
                             <div>
                                 <p class="font-orbitron">${item.name}</p>
                                 <p class="text-gray-400 text-sm"> (x${item.quantity})</p>
@@ -1249,7 +1518,7 @@
 
                 cartModal.classList.add('hidden');
                 // Only remove modal-open if another modal isn't open
-                if (profileModal.classList.contains('hidden') && signinModal.classList.contains('hidden')) {
+                if (!isAnyModalOpen()) {
                     document.body.classList.remove('modal-open');
                 }
             }
@@ -1257,7 +1526,50 @@
             function clearCart() {
                 cart = [];
                 updateCart();
-                showNotification("Cart cleared.");
+                showNotification("// CART EMPTIED //");
+            }
+            
+            // Thank You Modal Functions
+            function openThanksModal() {
+                thankYouModal.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeThanksModal() {
+                if (thankYouModal.classList.contains('hidden')) return; // Already closed
+                
+                thankYouModal.classList.add('hidden');
+                if (!isAnyModalOpen()) {
+                    document.body.classList.remove('modal-open');
+                }
+                // Go back to lifepath selector
+                showLifepathSelector();
+            }
+
+            // Insufficient Funds Modal Functions
+            function openInsufficientFundsModal(required) {
+                fundsModalBalance.innerText = `€$ ${userBalance.toLocaleString('en-US')}`;
+                fundsModalRequired.innerText = `€$ ${required.toLocaleString('en-US')}`;
+                insufficientFundsModal.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeInsufficientFundsModal() {
+                if (insufficientFundsModal.classList.contains('hidden')) return; // Already closed
+                
+                insufficientFundsModal.classList.add('hidden');
+                if (!isAnyModalOpen()) {
+                    document.body.classList.remove('modal-open');
+                }
+            }
+
+            // Helper to check if ANY modal is open
+            function isAnyModalOpen() {
+                return !signinModal.classList.contains('hidden') ||
+                       !profileModal.classList.contains('hidden') ||
+                       !cartModal.classList.contains('hidden') ||
+                       !thankYouModal.classList.contains('hidden') ||
+                       !insufficientFundsModal.classList.contains('hidden');
             }
 
             // --- EVENT LISTENERS ---
@@ -1290,7 +1602,7 @@
 
             profileBalanceInput.addEventListener('change', (e) => {
                 const newBalance = parseInt(e.target.value);
-                if (!isNaN(newBalance)) {
+                if (!isNaN(newBalance) && newBalance >= 0) {
                     userBalance = newBalance;
                     if (currentUser === 'v') {
                         localStorage.setItem('vBalance', userBalance.toString());
@@ -1314,7 +1626,8 @@
 
                 if (totalCost > userBalance) {
                     // Lore-accurate error message
-                    showNotification(`Viktor's Terminal: // INSUFFICIENT FUNDS // Eddies Required: €$${totalCost.toLocaleString()}`, 4000, true);
+                    closeCart(); // Close the cart modal
+                    openInsufficientFundsModal(totalCost); // Open the new funds modal
                 } else {
                     // Success
                     userBalance -= totalCost; // Deduct from balance
@@ -1323,17 +1636,20 @@
                         localStorage.setItem('vBalance', userBalance.toString());
                     }
                     
-                    showNotification(`Viktor's Terminal: // PAYMENT ACCEPTED // €$${totalCost.toLocaleString()} deducted. Thanks, choom. Sending you back...`, 3000);
                     clearCart();
                     closeCart();
-                    
-                    // Add a delay before redirecting to home
-                    setTimeout(() => {
-                        showLifepathSelector();
-                    }, 3000); // Match notification duration
+                    openThanksModal(); // Open the new thank you modal
                 }
             });
+
+            // Thank You Modal
+            closeThanksButton.addEventListener('click', closeThanksModal);
+            thanksOkButton.addEventListener('click', closeThanksModal);
             
+            // Insufficient Funds Modal
+            closeFundsButton.addEventListener('click', closeInsufficientFundsModal);
+            fundsOkButton.addEventListener('click', closeInsufficientFundsModal);
+
             // --- INITIALIZATION ---
             document.body.classList.add('modal-open'); // Start with sign-in modal open
             updateCart(); // Initialize cart display (0 items)
