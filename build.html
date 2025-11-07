@@ -1,0 +1,1344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Viktor's Cybernetics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Cursors */
+        body {
+            /* Default tech cursor */
+            cursor: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="rgba(0, 255, 255, 0.9)" d="M10.8 21.2v-7h2.4v7h-2.4zm-6.6-6.6l1.7-1.7 4.9 4.9-1.7 1.7-4.9-4.9zm13.2 0l-4.9-4.9 1.7-1.7 4.9 4.9-1.7 1.7zm-6.6-1.8v-2.4h2.4v2.4h-2.4zM10.8 11v-7h2.4v7h-2.4zm-4.9-4.9l1.7-1.7 4.9 4.9-1.7 1.7-4.9-4.9zM17.7 6.1l-4.9-4.9 1.7-1.7 4.9 4.9-1.7 1.7z"/></svg>') 0 0, auto;
+        }
+
+        .lifepath-card, .product-card, #back-button, #cart-button, #close-cart-button, #clear-cart-button, #checkout-button, .add-to-cart-button, #profile-button, #close-profile-button, #load-profile-v, #continue-as-guest, #sign-out-button, #profile-rep-input:not(:disabled), #profile-balance-input:not(:disabled) {
+            /* Pointer tech cursor */
+            cursor: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24"><path fill="rgba(255, 0, 255, 0.9)" d="M10.8 21.2v-7h2.4v7h-2.4zm-6.6-6.6l1.7-1.7 4.9 4.9-1.7 1.7-4.9-4.9zm13.2 0l-4.9-4.9 1.7-1.7 4.9 4.9-1.7 1.7zm-6.6-1.8v-2.4h2.4v2.4h-2.4zM10.8 11v-7h2.4v7h-2.4zm-4.9-4.9l1.7-1.7 4.9 4.9-1.7 1.7-4.9-4.9zM17.7 6.1l-4.9-4.9 1.7-1.7 4.9 4.9-1.7 1.7z"/></svg>') 0 0, pointer;
+        }
+
+        body {
+            font-family: 'Share Tech Mono', monospace;
+            background-color: #0a0a0f;
+            color: #00ffff;
+            text-shadow: 0 0 5px rgba(0, 255, 255, 0.5);
+            /* Glitchy scanlines effect */
+            background-image: linear-gradient(rgba(10, 10, 15, 0.75) 50%, rgba(10, 10, 15, 0.75) 50%), linear-gradient(0deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 2px;
+            animation: scanline 0.2s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 0 0, 0 2px; }
+        }
+
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .glitch-border {
+            border: 2px solid #ff00ff;
+            box-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff inset;
+            transition: all 0.2s;
+        }
+
+        .glitch-border:hover {
+            animation: glitch-anim 0.1s infinite alternate;
+        }
+
+        @keyframes glitch-anim {
+            0% {
+                transform: skew(-0.5deg);
+                box-shadow: 0 0 10px #ff00ff, 0 0 15px #ff00ff inset, 2px 2px 0 #00ffff, -2px -2px 0 #ff00ff;
+            }
+            100% {
+                transform: skew(0.5deg);
+                box-shadow: 0 0 12px #ff00ff, 0 0 18px #ff00ff inset, -2px -2px 0 #00ffff, 2px 2px 0 #ff00ff;
+            }
+        }
+
+        .product-card {
+            background-color: rgba(10, 30, 40, 0.7);
+            border: 2px solid #00ffff;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3), 0 0 10px rgba(0, 255, 255, 0.5) inset;
+        }
+        
+        .product-card .img-container {
+            background-color: #000;
+        }
+
+        .product-card img {
+            border-bottom: 2px solid #00ffff;
+            object-fit: contain; /* Changed from object-cover */
+        }
+        
+        .add-to-cart-button {
+            transition: all 0.2s;
+        }
+        
+        /* Custom scrollbar for modals */
+        #cart-items-list::-webkit-scrollbar,
+        #profile-content::-webkit-scrollbar {
+            width: 8px;
+        }
+        #cart-items-list::-webkit-scrollbar-track,
+        #profile-content::-webkit-scrollbar-track {
+            background: #0a0a0f;
+            border-left: 1px solid #00ffff;
+        }
+        #cart-items-list::-webkit-scrollbar-thumb,
+        #profile-content::-webkit-scrollbar-thumb {
+            background: #ff00ff;
+            border: 1px solid #00ffff;
+        }
+        #cart-items-list::-webkit-scrollbar-thumb:hover,
+        #profile-content::-webkit-scrollbar-thumb:hover {
+            background: #00ffff;
+            border-color: #ff00ff;
+        }
+
+        .side-effect {
+            color: #ff4d4d; /* Red for warnings */
+            text-shadow: 0 0 5px rgba(255, 0, 0, 0.7);
+            font-weight: bold;
+        }
+        
+        .price {
+            font-family: 'Orbitron', sans-serif;
+            color: #00ff00; /* Green for price */
+            text-shadow: 0 0 5px rgba(0, 255, 0, 0.7);
+            font-size: 1.25rem;
+        }
+
+        .lifepath-card {
+            position: relative;
+            height: 500px;
+            border: 4px solid transparent;
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+        
+        .lifepath-card:hover {
+            transform: scale(1.03);
+            border-color: #ff00ff;
+            box-shadow: 0 0 20px #ff00ff, 0 0 30px #ff00ff inset;
+        }
+
+        .lifepath-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(10, 10, 15, 1) 0%, rgba(10, 10, 15, 0.8) 20%, transparent 60%);
+            transition: background 0.3s ease;
+        }
+        
+        .lifepath-card:hover::after {
+            background: linear-gradient(to top, rgba(10, 10, 15, 0.9) 0%, rgba(10, 10, 15, 0.6) 15%, transparent 50%);
+        }
+
+        .lifepath-card div {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1.5rem;
+            z-index: 2;
+        }
+
+        .lifepath-card h3 {
+            font-size: 1.75rem;
+            color: #fff;
+            text-shadow: 0 0 10px #ff00ff;
+            margin-bottom: 0.5rem;
+        }
+
+        .lifepath-card p {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            opacity: 0.8;
+            transition: opacity 0.3s;
+        }
+        
+        .lifepath-card:hover p {
+            opacity: 1;
+        }
+
+        /* Modal Background Scroll Lock */
+        body.modal-open {
+            overflow: hidden;
+        }
+        
+        /* Scrollbar for Profile Modal */
+        #profile-content {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        /* Disable number input arrows */
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+    </style>
+</head>
+<body class="p-6">
+
+    <!-- Sign-in Modal (Visible on load) -->
+    <div id="signin-modal" class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-lg z-[100] flex items-center justify-center p-6">
+        <div class="glitch-border bg-black w-full max-w-md rounded-lg p-8 text-center">
+            <h2 class="font-orbitron text-3xl mb-8 text-cyan-400">// INITIATE CONNECTION //</h2>
+            <p class="text-gray-400 mb-8">Authenticate to access Viktor Vektor's terminal.</p>
+            <div class="space-y-4">
+                <button id="load-profile-v" class="glitch-border font-orbitron text-lg px-6 py-3 bg-cyan-600 bg-opacity-50 hover:bg-opacity-100 text-white w-full">
+                    LOAD PROFILE: V
+                </button>
+                <button id="continue-as-guest" class="glitch-border font-orbitron text-lg px-6 py-3 bg-gray-800 bg-opacity-50 hover:bg-opacity-100 text-white w-full">
+                    CONTINUE AS GUEST
+                </button>
+            </div>
+            <p class="text-xs text-gray-700 mt-8">// Unsecured connections may be monitored by NetWatch. //</p>
+        </div>
+    </div>
+
+    <!-- Header (Initially hidden) -->
+    <header class="hidden text-center mb-12 relative">
+        <h1 class="font-orbitron text-4xl md:text-6xl mb-2 text-shadow-lg glitch-text" data-text="VIKTOR'S CYBERNETICS">
+            VIKTOR'S CYBERNETICS
+        </h1>
+        <p class="text-lg text-gray-400">// Your friendly neighborhood ripperdoc. No questions asked. //</p>
+        
+        <!-- Header Buttons -->
+        <div class="absolute top-0 right-0 mt-4 mr-4 flex gap-4">
+            <!-- Profile Button -->
+            <button id="profile-button" title="View Profile" class="text-cyan-400 hover:text-white glitch-border px-4 py-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+            </button>
+            
+            <!-- Cart Button -->
+            <button id="cart-button" title="View Cart" class="text-cyan-400 hover:text-white glitch-border px-4 py-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                <span id="cart-count" class="ml-2 bg-pink-600 text-white text-xs font-bold rounded-full px-2 py-1">0</span>
+            </button>
+            
+            <!-- Sign Out Button -->
+            <button id="sign-out-button" title="Sign Out" class="text-pink-500 hover:text-white glitch-border px-4 py-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content (Initially hidden) -->
+    <main class="hidden container mx-auto max-w-7xl">
+
+        <!-- Lifepath Selector -->
+        <section id="lifepath-selector" class="text-center mb-12">
+            <h2 class="text-3xl md:text-4xl text-center mb-8">// CHOOSE YOUR PREFERENCE</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Nomad Card -->
+                <div class="lifepath-card lifepath-nomad" data-path="nomad" style="background-image: url('https://preview.redd.it/corpo-or-nomad-v0-eg0i2h79cleb1.jpg?width=640&crop=smart&auto=webp&s=0dae4cbe789df02508320d55fa7073c294c89678')">
+                    <div>
+                        <h3 class="font-orbitron">NOMAD</h3>
+                        <p class="text-gray-300">Left the clan, roaming the Badlands. You value family, freedom, and fixing your ride. The city is a place to scavenge, not to live.</p>
+                    </div>
+                </div>
+                <!-- Streetkid Card -->
+                <div class="lifepath-card lifepath-streetkid" data-path="streetkid" style="background-image: url('https://i.redd.it/s2jnzcqcdm961.png')">
+                    <div>
+                        <h3 class="font-orbitron">STREETKID</h3>
+                        <p class="text-gray-300">Grew up in the gutter of Heywood. You know the streets, the gangs, and the fixers. This city is yours to conquer, one gig at a time.</p>
+                    </div>
+                </div>
+                <!-- Corpo Card -->
+                <div class="lifepath-card lifepath-corpo" data-path="corpo" style="background-image: url('https://i.redd.it/1ktiyotv2af61.png')">
+                    <div>
+                        <h3 class="font-orbitron">CORPO</h3>
+                        <p class="text-gray-300">You were an Arasaka agent. You had it all. Now you've been chewed up and spat out. Time to use your inside knowledge to burn it all down.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Product Grid -->
+        <section id="product-grid" class="hidden">
+            <div class="flex justify-between items-center mb-8">
+                <h2 id="shop-title" class="text-3xl md:text-4xl text-center">// INVENTORY</h2>
+                <button id="back-button" class="glitch-border font-orbitron text-lg px-6 py-2 bg-black bg-opacity-50 hover:bg-opacity-100">
+                    &lt; BACK
+                </button>
+            </div>
+            <div id="product-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Products will be injected here by JS -->
+            </div>
+        </section>
+        
+        <!-- Global Notification -->
+        <div id="notification-toast" class="hidden fixed bottom-10 right-10 z-50">
+            <!-- Message will be injected here -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center mt-20 pt-10 border-t-2 border-dashed border-cyan-500">
+        <p class="text-gray-500 text-sm">
+            DISCLAIMER: All products are "pre-owned" and sold as-is. 
+            Viktor's Cybernetics is not liable for data-haunting, synaptic psychosis, or spontaneous combustion.
+        </p>
+        <p class="text-gray-600 text-xs mt-2">
+            Stay Safe, Stay Updated, Chooms!!
+        </p>
+        <p class="text-gray-700 text-xs mt-4">// NIGHT CITY DATATERM_v.2077</p>
+    </footer>
+
+    <!-- Profile Modal -->
+    <div id="profile-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 backdrop-blur-lg z-50 flex items-center justify-center p-6">
+        <div class="glitch-border bg-black w-full max-w-lg rounded-lg overflow-hidden p-8 relative">
+            <!-- Close Button -->
+            <button id="close-profile-button" class="absolute top-4 right-6 text-cyan-400 hover:text-white text-4xl">&times;</button>
+            
+            <h2 class="font-orbitron text-3xl mb-6 text-center">// USER PROFILE //</h2>
+            
+            <div id="profile-content" class="text-center pr-2">
+                <img id="profile-image" src="https://i.redd.it/pvhto41r1mlc1.png" alt="User Profile" class="w-48 h-48 rounded-full mx-auto mb-6 border-4 border-cyan-400 shadow-lg shadow-cyan-400/50" onerror="this.src='https://placehold.co/200x200/333/FFF?text=V'">
+                
+                <div class="text-left space-y-4">
+                    <div class="p-4 bg-gray-900 rounded-md border border-gray-700">
+                        <span class="text-gray-500 text-sm font-orbitron">USER:</span>
+                        <p id="profile-user-name" class="text-2xl text-white">V</p>
+                    </div>
+                    <div class="p-4 bg-gray-900 rounded-md border border-gray-700">
+                        <span class="text-gray-500 text-sm font-orbitron">REP / ADDRESS:</span>
+                        <input type="text" id="profile-rep-input" value="HEYWOOD (RISING)" class="bg-gray-800 border border-cyan-400 text-2xl text-white p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-pink-500 font-sans disabled:opacity-50 disabled:cursor-not-allowed">
+                    </div>
+                    <div class="p-4 bg-gray-900 rounded-md border border-gray-700">
+                        <span class="text-gray-500 text-sm font-orbitron">PREFERRED VENDOR:</span>
+                        <p class="text-2xl text-white">VIKTOR VEKTOR</p>
+                    </div>
+                    <!-- Added more content for scrolling -->
+                    <div id="profile-balance-container" class="p-4 bg-gray-900 rounded-md border border-gray-700">
+                        <span class="text-gray-500 text-sm font-orbitron">BALANCE (EDDIES):</span>
+                        <div class="flex items-center">
+                            <span class="text-2xl text-green-400 mr-2">€$</span>
+                            <input type="number" id="profile-balance-input" value="1200" class="bg-gray-800 border border-cyan-400 text-2xl text-green-400 p-2 rounded-md w-full focus:outline-none focus:ring-2 focus:ring-pink-500 font-sans disabled:opacity-50 disabled:cursor-not-allowed">
+                        </div>
+                    </div>
+                    <div id="profile-notable-ware" class="p-4 bg-gray-900 rounded-md border border-gray-700">
+                        <span class="text-gray-500 text-sm font-orbitron">NOTABLE CYBERWARE:</span>
+                        <p class="text-lg text-white">Kiroshi Optics (Mk.I)</p>
+                        <p class="text-lg text-white">Ballistic Coprocessor</p>
+                    </div>
+                    <div id="profile-last-visit" class="p-4 bg-gray-900 rounded-md border border-gray-700">
+                        <span class="text-gray-500 text-sm font-orbitron">LAST_VISIT:</span>
+                        <p class="text-lg text-white">2077-10-29</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 backdrop-blur-lg z-50 flex items-center justify-center p-6">
+        <div class="glitch-border bg-black w-full max-w-2xl rounded-lg overflow-hidden p-8 relative">
+            <!-- Close Button -->
+            <button id="close-cart-button" class="absolute top-4 right-6 text-cyan-400 hover:text-white text-4xl">&times;</button>
+            
+            <h2 class="font-orbitron text-3xl mb-6 text-center">// YOUR RIG //</h2>
+            
+            <div id="cart-items-list" class="max-h-64 overflow-y-auto mb-6 pr-2">
+                <!-- Cart items will be injected here -->
+                <p class="text-gray-500 text-center">Your cart is empty, choom.</p>
+            </div>
+
+            <div class="border-t-2 border-dashed border-cyan-500 pt-6">
+                <div class="flex justify-between items-center mb-6">
+                    <span class="text-xl text-gray-400">TOTAL:</span>
+                    <span id="cart-total" class="font-orbitron text-3xl text-green-400">€$ 0</span>
+                </div>
+                <div class="flex justify-between gap-4">
+                    <button id="clear-cart-button" class="glitch-border font-orbitron text-lg px-6 py-2 bg-red-800 bg-opacity-50 hover:bg-opacity-100 text-white w-1/2">
+                        CLEAR CART
+                    </button>
+                    <button id="checkout-button" class="glitch-border font-orbitron text-lg px-6 py-2 bg-cyan-600 bg-opacity-50 hover:bg-opacity-100 text-white w-1/2">
+                        CHECK OUT
+                    </button>
+                </div>
+                <p class="text-xs text-gray-600 text-center mt-4">// Checkout is... conceptual. Vik ain't set up online payments. //</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- DATABASE ---
+        const products = {
+            nomad: [
+                {
+                    id: 'n1',
+                    name: "Rusty Keren-Zev",
+                    price: "€$ 2,500",
+                    rawPrice: 2500,
+                    description: "A salvaged Sandevistan-clone. Boosts reflexes for a short time. Mostly reliable. Tends to smell like gasoline.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/5/56/SandevistanC4.png/revision/latest?cb=20230925062810",
+                    sideEffects: "Occasional blue-screens, jitters, and a strong urge to listen to pirate radio."
+                },
+                {
+                    id: 'n2',
+                    name: "Salvaged Gorilla Arms",
+                    price: "€$ 3,800",
+                    rawPrice: 3800,
+                    description: "A set of powerful Gorilla Arms, clearly ripped from a construction bot. Covered in rust and hydraulic fluid, but they still pack a mean punch.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/3/35/StrongArms.png/revision/latest?cb=20230928072235",
+                    sideEffects: "Loud. Very loud. May lock up if you punch something *too* hard. Occasional sparks."
+                },
+                {
+                    id: 'n3',
+                    name: "Junker's Optics (Mk.I)",
+                    price: "€$ 1,800",
+                    rawPrice: 1800,
+                    description: "A Kiroshi-style eye, pieced together from three different models. Basic zoom and a (buggy) threat detector.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/d/df/Iconic_KiroshiOpticsBare.png/revision/latest?cb=20230924132054",
+                    sideEffects: "UI sometimes displays in Japanese. Threat detector identifies cacti as 'hostile'."
+                },
+                {
+                    id: 'n4',
+                    name: "'Long-Haul' Neural Link",
+                    price: "€$ 3,100",
+                    rawPrice: 3100,
+                    description: "Patched-together comms implant. Boosts signal reception in the Badlands and lets you interface directly with most common vehicle systems. Mostly.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/8/87/SmartLink.png/revision/latest?cb=20210623161930",
+                    sideEffects: "May pick up radio signals from 50 years ago. Risk of your car's radio playing nothing but polka."
+                },
+                {
+                    id: 'n5',
+                    name: "'Wasteland' Filter",
+                    price: "€$ 2,800",
+                    rawPrice: 2800,
+                    description: "An internal filtration system ripped from a Militech survival kit. Makes puddle water 'mostly' drinkable.",
+                    image: "https://cyberpunk2077.wiki.fextralife.com/file/Cyberpunk-2077/syn-lungs-cyberware-cyberpunk-2077-wiki-guide.png",
+                    sideEffects: "Water tastes like metal. Occasional system flush required (manual). May identify clean water as 'unpotable'."
+                },
+                {
+                    id: 'n6',
+                    name: "Scavenged Leg Actuators",
+                    price: "€$ 3,500",
+                    rawPrice: 3500,
+                    description: "Mismatched hydraulics for your legs. One is from a work-bot, the other... might be agricultural. Adds jump height.",
+                    image: "https://cyberpunk2077.wiki.fextralife.com/file/Cyberpunk-2077/lynx_paws_cyberware_cyberpunk_2077_wiki_guide_150px.png",
+                    sideEffects: "One leg is stronger than the other. Walking sounds like 'CLANK-whirr-CLANK-whirr'. Prone to locking up in damp weather."
+                },
+                {
+                    id: 'n7',
+                    name: "Rocker's Nomad Deck",
+                    price: "€$ 4,000",
+                    rawPrice: 4000,
+                    description: "A simple, rugged deck with a built-in Rara-Avis OS. Comes pre-loaded with 'Ping' and 'Vehicle Hotwire'.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/3/3b/RavenMicrocyber.png/revision/latest?cb=20230925101804",
+                    sideEffects: "Vehicle Hotwire has a 30% chance of setting the car alarm off. Ping is... very slow."
+                },
+                {
+                    id: 'n8',
+                    name: "Militech 'Desert' OS",
+                    price: "€$ 5,200",
+                    rawPrice: 5200,
+                    description: "Salvaged from a Militech transport. Weather-sealed and durable. OS is locked to Militech-friendly daemons.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/2/23/MilitechParaline.png/revision/latest?cb=20230925094313",
+                    sideEffects: "Constantly tries to connect to Militech servers. UI is aggressively patriotic."
+                },
+                {
+                    id: 'n9',
+                    name: "Long-Range Signal OS",
+                    price: "€$ 3,800",
+                    rawPrice: 3800,
+                    description: "A custom OS built around a signal booster. Lets you connect to the net from the deep Badlands. (Bandwidth not guaranteed).",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/9/9d/HauntedCyberdeck.png/revision/latest?cb=20230925103117",
+                    sideEffects: "May accidentally broadcast your location to rival clans. High latency. Very high."
+                },
+                {
+                    id: 'n10',
+                    name: "Aldecaldo 'Family' OS",
+                    price: "€$ 4,500",
+                    rawPrice: 4500,
+                    description: "A shared-source OS. Connects to the Aldecaldo net for shared intel. Simple, effective, and reliable.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/c/ce/BiotechSigma.png/revision/latest?cb=20230925092353",
+                    sideEffects: "Comes with a mandatory 'group chat' feature that you cannot mute. Ever."
+                },
+                {
+                    id: 'n11',
+                    name: "Junker's 'Franken-Deck'",
+                    price: "€$ 2,900",
+                    rawPrice: 2900,
+                    description: "This isn't a deck, it's three decks bolted together. It has... 4 RAM? And 3 quickhack slots? Maybe?",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/7/71/RamUpgrade.png/revision/latest?cb=20230925182209",
+                    sideEffects: "High chance of spontaneous combustion. Quickhacks may target you by mistake. Smells of ozone."
+                },
+                {
+                    id: 'n12',
+                    name: "Junker's Berserk",
+                    price: "€$ 3,200",
+                    rawPrice: 3200,
+                    description: "A rusty, sparking Berserk rig. Triggers a combat adrenal dump. Might also trigger tetanus.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/2/25/BerserkC1.png/revision/latest?cb=20230925065354",
+                    sideEffects: "Blurry vision. Uncontrolled roaring. High chance of failure on activation (50/50)."
+                },
+                {
+                    id: 'n13',
+                    name: "Salvaged Mantis Blades",
+                    price: "€$ 4,000",
+                    rawPrice: 4000,
+                    description: "Found these on a 'decommissioned' Arasaka scout. They're... sharp. One blade is slightly bent. Actuators whine.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/8/89/MantisBlades.png/revision/latest?cb=20230928074951",
+                    sideEffects: "May deploy by accident. High chance of rust. Not ideal for 'subtle' work."
+                },
+                {
+                    id: 'n14',
+                    name: "Frayed Monowire",
+                    price: "€$ 3,900",
+                    rawPrice: 3900,
+                    description: "A thin, high-tensile wire, recovered from a corporate courier. The actuators are loud, and the wire itself is a bit... sticky.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/d/d6/NanoWires.png/revision/latest?cb=20230928080643",
+                    sideEffects: "Tangles easily. May cut your own fingers. Not recommended for non-lethal use (or any use, really)."
+                },
+                {
+                    id: 'n15',
+                    name: "Scrap-Metal Launcher",
+                    price: "€$ 4,200",
+                    rawPrice: 4200,
+                    description: "A projectile launcher welded together from scrap. It's designed to fire... well, anything that fits. Small rocks, old bolts, explosive charges. No warranty.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/c/cf/ProjectileLauncher.png/revision/latest?cb=20230928080923",
+                    sideEffects: "High chance of jamming. Projectiles often 'tumble'. May explode on user."
+                },
+                {
+                    id: 'n16',
+                    name: "Reinforced 'Junker' Bones",
+                    price: "€$ 3,300",
+                    rawPrice: 3300,
+                    description: "Titanium-laced bone reinforcement. Looks like it was welded from scrap metal. Better than nothing when you hit the pavement.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/4/49/TitaniumInfusedBones.png/revision/latest?cb=20230928113307",
+                    sideEffects: "Makes a creaking sound. Sets off metal detectors. Heavier than it looks."
+                },
+                {
+                    id: 'n17',
+                    name: "Microwire Tendons (Salvaged)",
+                    price: "€$ 3,100",
+                    rawPrice: 3100,
+                    description: "Tendon reinforcement made from scavenged microwire. Increases grip strength and reflex. Twitches in the cold.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/6/65/JenkinsTendons.png/revision/latest?cb=20230926081535",
+                    sideEffects: "Makes a slight 'twanging' noise. Grip may lock randomly. Not insulated."
+                },
+                {
+                    id: 'n18',
+                    name: "Reinforced 'Jumper' Ankles",
+                    price: "€$ 2,900",
+                    rawPrice: 2900,
+                    description: "Ankle actuators reinforced with salvaged springs and hydraulics. Lets you jump higher and land harder. Squeaks.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/9/96/ReinforcedMuscles.png/revision/latest?cb=20230926075549",
+                    sideEffects: "Loud, metallic 'boing' sound on jump. Springs can get stuck. Not built for running, just jumping."
+                },
+                {
+                    id: 'n19',
+                    name: "Jury-Rigged Second Heart",
+                    price: "€$ 4,500",
+                    rawPrice: 4500,
+                    description: "A salvaged cardio-booster. If your heart stops, this *might* restart it with a powerful jolt. Smells faintly of burnt circuits.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/1/1e/SecondHeart.png/revision/latest?cb=20230929160656",
+                    sideEffects: "Restart jolt is extremely painful. May restart at inconvenient times (e.g., while sleeping). 50/50 success rate."
+                },
+                {
+                    id: 'n20',
+                    name: "Scrap-Metal Plating",
+                    price: "€$ 3,800",
+                    rawPrice: 3800,
+                    description: "Bolted-on plates of scrap metal. Better than nothing. Might deflect a ricochet or two. Painted with a clan sigil.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/a/ab/NanoTechPlates.png/revision/latest?cb=20230929180320",
+                    sideEffects: "Very heavy. Makes a lot of noise. Sigil choice is not optional. Reduces flexibility."
+                },
+                {
+                    id: 'n21',
+                    name: "Jury-Rigged RAM Manager",
+                    price: "€$ 2,800",
+                    rawPrice: 2800,
+                    description: "A salvaged RAM manager. Claims to 'optimize' RAM, but mostly just moves data around. Has a toggle switch bolted to it.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/d/df/CamilloRamManager.png/revision/latest/scale-to-width-down/64?cb=20230925174523",
+                    sideEffects: "May accidentally purge RAM you were using. Toggle switch is... sticky. Sometimes just reboots your deck."
+                }
+            ],
+            streetkid: [
+                {
+                    id: 's1',
+                    name: "'Mili-spec' Gorilla Arms",
+                    price: "€$ 14,000",
+                    rawPrice: 14000,
+                    description: "Knockoff Militech arms. Flashy chrome finish, 'enhanced' strength. Perfect for opening stubborn doors or people.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/3/35/StrongArms.png/revision/latest?cb=20230928072235",
+                    sideEffects: "Chrome finish flakes off. Warranty void if used in actual combat. 'Enhanced' strength is just a loud motor."
+                },
+                {
+                    id: 's2',
+                    name: "'Saka-Lite' Cyberdeck",
+                    price: "€$ 22,000",
+                    rawPrice: 22000,
+                    description: "Looks just like an Arasaka deck, but the OS was coded in a garage. Comes with 3 'premium' quickhacks: Ping (Loud), Short Circuit (Weak), and Beep (Annoying).",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/7/71/RamUpgrade.png/revision/latest?cb=20230925182209",
+                    sideEffects: "High chance of ICE on login. Randomly disconnects during important hacks. Beep quickhack is *very* annoying."
+                },
+                {
+                    id: 's3',
+                    name: "LED-Infused Skinweave",
+                    price: "€$ 9,000",
+                    rawPrice: 9000,
+                    description: "Why stop bullets when you can look good? This subdermal weave glows in 16 customizable colors. All style, no substance.",
+                    image: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAIBAQEBAAIBAAIDAgMCAgQFAwQDBQQEBAQDBQYHBgYGBgYHBwcHBwcHCAgICAgICAgKCgoKCgoKCgoKCgoKCgoKCgoKCv/wAALCAQAAgADASIAAAIBAxEB/8QAGgAAAwEBAQEBAAAAAAAAAAAAAAECAwQFBv/EABcBAQEBAwAAAAAAAAAAAAAAAAABAgP/2QAIBAQAQEAAgMAAwEBAAAAAAAAAAECEQMSITFRECIyE//EABQRAQAAAAAAAAAAAAAAAAAAAAD/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAAADy0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMessage from V internal agent",
+                    sideEffects: "Makes you a *very* easy target. Drains phone battery. Might attract moths."
+                },
+                {
+                    id: 's4',
+                    name: "'Night-Vis' Kiroshi (Stolen)",
+                    price: "€$ 11,000",
+                    rawPrice: 11000,
+                    description: "A 'liberated' Kiroshi optic with a glitchy night vision mode. Perfect for navigating dark alleys. Has a small crack in the lens.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/d/df/Iconic_KiroshiOpticsBare.png/revision/latest?cb=20230924132054",
+                    sideEffects: "Night vision flickers constantly. UI is locked to Arasaka corporate branding. May cause headaches and 'seeing things'."
+                },
+                {
+                    id: 's5',
+                    name: "Bootleg Syn-Lungs",
+                    price: "€$ 7,500",
+                    rawPrice: 7500,
+                    description: "Filters 'most' of Heywood's smog. These 'fell off a truck' behind a Ripperdoc's clinic. Slightly used.",
+                    image: "https://cyberpunk2077.wiki.fextralife.com/file/Cyberpunk-2077/syn-lungs-cyberware-cyberpunk-2077-wiki-guide.png",
+                    sideEffects: "Makes a slight whistling sound on inhale. Occasional 'recycled air' taste. Warranty not included (or available)."
+                },
+                {
+                    id: 's6',
+                    name: "Jailbroken 'NetWatch' OS",
+                    price: "€$ 25,000",
+                    rawPrice: 25000,
+                    description: "A 'liberated' NetWatch OS. Comes with 'illegal' quickhacks like 'Distract' and 'Steal Eddies (Small)'.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/d/d1/NetWatchNetdriver.png/revision/latest?cb=20230925101710",
+                    sideEffects: "Has a NetWatch tracker. Use at your own risk. 'Steal Eddies' has a 50% failure rate that alerts the target."
+                },
+                {
+                    id: 's7',
+                    name: "Heywood 'Skimmer' OS",
+                    price: "€$ 15,500",
+                    rawPrice: 15500,
+                    description: "An OS designed for one thing: skimming data from access points and unsuspecting gonks. Limited RAM, high-speed connection.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/5/5d/TetratronicRippler.png/revision/latest?cb=20230925092254",
+                    sideEffects: "Fills your data storage with useless junk. Occasionally 'skims' your own bank account by accident."
+                },
+                {
+                    id: 's8',
+                    name: "'Voodoo' OS (Replica)",
+                    price: "€$ 21,000",
+                    rawPrice: 21000,
+                    description: "A cheap imitation of a Voodoo Boys deck. Looks the part, but the internals are standard. Impress your friends.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/0/05/ExDisk.png/revision/latest?cb=20230928104613",
+                    sideEffects: "Does not connect to the 'real' net. UI is in a language you can't read. May or may not be haunted."
+                },
+                {
+                    id: 's9',
+                    name: "Mox-Themed OS",
+                    price: "€$ 18,000",
+                    rawPrice: 18000,
+                    description: "A deck with a custom Mox-themed OS. All chrome, pink, and blue. Comes with 'Blinding Flash' and 'Loud Noise' quickhacks.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/c/ce/BiotechSigma.png/revision/latest?cb=20230925092353",
+                    sideEffects: "UI is distractingly bright. 'Loud Noise' quickhack also plays in your own ears. No 'off' switch for the glitter effects."
+                },
+                {
+                    id: 's10',
+                    name: "Zetatech 'Street' Berserk",
+                    price: "€$ 15,500",
+                    rawPrice: 15500,
+                    description: "Standard-issue Zetatech Berserk. More reliable than the junker model, but less 'oomph' than the corpo-grade stuff. A solid mid-range choice.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/c/c2/BerserkC2.png/revision/latest?cb=20230925065404",
+                    sideEffects: "Causes temporary color-blindness (everything is red). Mild aggression for 1-2 hours after use."
+                },
+                {
+                    id: 's11',
+                    name: "'Gilded' Mantis Blades",
+                    price: "€$ 19,500",
+                    rawPrice: 19500,
+                    description: "Standard Mantis Blades with a custom gold-chrome finish. Looks nova, until the plating scratches (it will).",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/8/89/MantisBlades.png/revision/latest?cb=20230928074951",
+                    sideEffects: "Gold finish is surprisingly reflective; bad for stealth. Needs constant polishing. Draws a *lot* of attention."
+                },
+                {
+                    id: 's12',
+                    name: "Chromed Monowire",
+                    price: "€$ 18,200",
+                    rawPrice: 18200,
+                    description: "A flashy monowire with a custom chrome finish. Looks preem when you whip it out. Retraction motor is... questionable.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/d/d6/NanoWires.png/revision/latest?cb=20230928080643",
+                    sideEffects: "Needs to be polished. Loud, high-pitched whining sound on deployment. Chrome finish can chip, revealing cheap plastic."
+                },
+                {
+                    id: 's13',
+                    name: "'Boom-Boom' Launcher",
+                    price: "€$ 17,800",
+                    rawPrice: 17800,
+                    description: "A flashy, chromed-out projectile launcher. Looks impressive, and the custom 'explosive' rounds (sold separately) make a *very* loud noise.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/c/cf/ProjectileLauncher.png/revision/latest?cb=20230928080923",
+                    sideEffects: "Ammo is ridiculously expensive. Chrome finish gets smudged. Not as powerful as it looks. Very loud."
+                },
+                {
+                    id: 's14',
+                    name: "Chrome-Plated Bones",
+                    price: "€$ 16,000",
+                    rawPrice: 16000,
+                    description: "Standard bone reinforcement with a *very* shiny chrome finish. Looks preem, even if it's just cheap plating.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/4/49/TitaniumInfusedBones.png/revision/latest?cb=20230928113307",
+                    sideEffects: "Chrome plating chips and flakes. Not as strong as it looks. Reflects light, terrible for stealth."
+                },
+                {
+                    id: 's15',
+                    name: "Tuned 'Reflex' Tendons",
+                    price: "€$ 15,200",
+                    rawPrice: 15200,
+                    description: "Street-tuned tendon enhancement for faster reflexes. Coated in a flashy blue polymer. Supposedly 'top-tier'.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/6/65/JenkinsTendons.png/revision/latest?cb=20230926081535",
+                    sideEffects: "Polymer coating peels easily. Prone to 'over-volting', causing muscle spasms. Blue glow is not optional."
+                },
+                {
+                    id: 's16',
+                    name: "'Show-off' Double-Jump Ankles",
+                    price: "€$ 14,500",
+                    rawPrice: 14500,
+                    description: "Flashy chrome ankle actuators, supposedly 'calibrated' for a double jump. Looks preem, even if the second jump is just a small hop.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/9/96/ReinforcedMuscles.png/revision/latest?cb=20230926075549",
+                    sideEffects: "'Double jump' feature fails 40% of the time. Chrome finish scratches easily. Makes a 'charging' sound that can't be turned off."
+                },
+                {
+                    id: 's17',
+                    name: "'Reviver' Second Heart (Knockoff)",
+                    price: "€$ 18,000",
+                    rawPrice: 18000,
+                    description: "Looks just like the real deal. This 'premium' second heart will 'definitely' restart your ticker if it flatlines. Comes with a cool glowing logo.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/1/1e/SecondHeart.png/revision/latest?cb=20230929160656",
+                    sideEffects: "Logo glow cannot be disabled. Restart feature is... untested. May just deliver a weak, non-reviving shock."
+                },
+                {
+                    id: 's18',
+                    name: "Gilded 'Rhino' Plating (Knockoff)",
+                    price: "€$ 16,500",
+                    rawPrice: 16500,
+                    description: "Flashy subdermal plating with a gold-chrome finish. Looks tough. Might stop a small-caliber round, maybe.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/a/ab/NanoTechPlates.png/revision/latest?cb=20230929180320",
+                    sideEffects: "Gold finish scratches off easily. Not as protective as it looks. Heats up in direct sunlight."
+                },
+                {
+                    id: 's19',
+                    name: "Overclocked RAM Manager (Knockoff)",
+                    price: "€$ 13,000",
+                    rawPrice: 13000,
+                    description: "Looks like a real 'Camillo'. This 'overclocked' manager supposedly frees up RAM faster than anything. Has a flashy LED on it.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/d/df/CamilloRamManager.png/revision/latest/scale-to-width-down/64?cb=20230925174523",
+                    sideEffects: "Overheats. A lot. LED flickers and is distractingly bright. 'Optimization' is just a fancy 'reboot' script."
+                }
+            ],
+            corpo: [
+                {
+                    id: 'c1',
+                    name: "Arasaka Kiroshi Optics (Mk.III)",
+                    price: "€$ 55,000",
+                    rawPrice: 55000,
+                    description: "Top-of-the-line optical implants. 40x zoom, biometric tracking, and seamless data overlays. See the world as your asset.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/d/df/Iconic_KiroshiOpticsBare.png/revision/latest?cb=20230924132054",
+                    sideEffects: "Terms & Conditions apply. Data streamed to Arasaka servers. Subscription fee for 'premium' vision."
+                },
+                {
+                    id: 'c2',
+                    name: "Arasaka Biodyne Berserk",
+                    price: "€$ 72,000",
+                    rawPrice: 72000,
+                    description: "A clean, corporate-sanctioned alternative to street psychosis. Enhances strength, speed, and aggression for 'hostile negotiations'.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/5/56/BerserkC4.png/revision/latest?cb=20230925065430",
+                    sideEffects: "Aggression may not turn off. May identify co-workers as 'hostile'. A strong desire to 'maximize synergy' through violence."
+                },
+                {
+                    id: 'c3',
+                    name: "Internal Agent (Subdermal)",
+                    price: "€$ 110,000",
+                    rawPrice: 110000,
+                    description: "The ultimate in corporate loyalty. This implant monitors all vital signs and communications, ensuring 100% compliance. Includes a built-in 'failsafe'.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/5/53/Biomonitor.png/revision/latest?cb=20230929161644",
+                    sideEffects: "Loss of free will. Failsafe may be triggered by 'suboptimal performance'. You are now the property of Arasaka Corporation."
+                },
+                {
+                    id: 'c4',
+                    name: "'Zetatech' Empathy Blocker",
+                    price: "€$ 85,000",
+                    rawPrice: 85000,
+                    description: "Modulates emotional responses during high-stakes negotiations. Maintain a perfect poker face while firing your entire department.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/b/bb/VisualCortexSupport.png/revision/latest?cb=20230929130541",
+                    sideEffects: "Chronic apathy. Inability to recognize sarcasm. May forget loved ones' faces. All 'features' per Zetatech."
+                },
+                {
+                    id: 'c5',
+                    name: "Syn-Cortex (Managerial)",
+                    price: "€$ 98,000",
+                    rawPrice: 98000,
+                    description: "High-speed cognitive processor. Optimizes multitasking, strategic planning, and monitors subordinate efficiency. Requires Arasaka-Net subscription.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/4/42/BioConductors.png/revision/latest?cb=20230925192348",
+                    sideEffects: "May perceive 'inefficiency' as a physical threat. Reduced capacity for empathy. Risk of burnout (processor and user)."
+                },
+                {
+                    id: 'c6',
+                    name: "Blackwall-Shielded Neural Port",
+                    price: "€$ 150,000",
+                    rawPrice: 150000,
+                    description: "A top-tier interface port with military-grade ICE. Access corporate mainframes with reduced risk. (Reduced risk is not zero risk).",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/8/87/SmartLink.png/revision/latest?cb=20210623161930",
+                    sideEffects: "Auditory hallucinations (static, whispers). Paranoia. If ICE is breached, 'reduced risk' becomes 'total synaptic meltdown'."
+                },
+                {
+                    id: 'c7',
+                    name: "Arasaka 'Kusanagi' Deck",
+                    price: "€$ 220,000",
+                    rawPrice: 220000,
+                    description: "Executive-level cyberdeck. 10 RAM, 6 quickhack slots, and seamless integration with Arasaka-Net. Comes with 'System Reset' daemon.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/7/71/RamUpgrade.png/revision/latest?cb=20230925182209",
+                    sideEffects: "Requires Arasaka corporate credentials. All actions logged. 'System Reset' may cause... memory loss."
+                },
+                {
+                    id: 'c8',
+                    name: "Militech 'Aegis' OS",
+                    price: "€$ 190,000",
+                    rawPrice: 190000,
+                    description: "Military-grade combat OS. Optimizes squad-based quickhacks and biometric data. Perfect for hostile takeovers.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/c/ce/BiotechSigma.png/revision/latest?cb=20230925092353",
+                    sideEffects: "Classifies 'civilians' as 'acceptable collateral'. Will try to optimize your 'kill count'. Subscription-based."
+                },
+                {
+                    id: 'c9',
+                    name: "Zetatech 'Oracle' Deck",
+                    price: "€$ 175,000",
+                    rawPrice: 175000,
+                    description: "A deck optimized for data-mining and stock market prediction. Runs complex analysis daemons in the background.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/c/ce/BiotechSigma.png/revision/latest?cb=20230925092353",
+                    sideEffects: "Analysis daemons consume 90% of your cognitive function. May cause you to speak in stock tickers."
+                },
+                {
+                    id: 'c10',
+                    name: "Stealth 'Ghost' OS",
+                    price: "€$ 210,000",
+                    rawPrice: 210000,
+                    description: "An OS designed for corporate espionage. Runs silent, leaves no trace, and features advanced anti-ICE protocols.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/e/ef/ArasakaShadow.png/revision/latest?cb=20210605075722",
+                    sideEffects: "If detected, OS self-destructs (taking your synapses with it). May cause user to become pathologically secretive."
+                },
+                {
+                    id: 'c11',
+                    name: "Biodyne 'Executive' OS",
+                    price: "€$ 160,000",
+                    rawPrice: 160000,
+                    description: "An OS that's also a personal assistant. Manages your schedule, your biometrics, and your portfolio. 'Efficiency is life.'",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/7/7c/CyberwareCapacityBooster.png/revision/latest/scale-to-width-down/64?cb=20230930113934",
+                    sideEffects: "Will schedule 'efficiency breaks' (30 seconds). May sell your stocks if your heart rate is 'suboptimal'. Very judgmental."
+                },
+                {
+                    id: 'c12',
+                    name: "Arasaka 'Type-10' Mantis Blades",
+                    price: "€$ 68,000",
+                    rawPrice: 68000,
+                    description: "Corporate-issue, diamond-edged Mantis Blades. Silent, efficient, and perfect for 'aggressive negotiations'.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/8/89/MantisBlades.png/revision/latest?cb=20230928074951",
+                    sideEffects: "Requires Arasaka firmware. All 'actions' are logged. Blades will retract if used on Arasaka property without authorization."
+                },
+                {
+                    id: 'c13',
+                    name: "Arasaka 'Executive' Gorilla Arms",
+                    price: "€$ 75,000",
+                    rawPrice: 75000,
+                    description: "Top-tier, silent actuators with reinforced titanium. Perfect for 'assertive' boardroom meetings or forcing open sealed vault doors. Polished black finish.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/3/35/StrongArms.png/revision/latest?cb=20230928072235",
+                    sideEffects: "Requires Arasaka firmware. Will not function on designated 'safe' personnel. May submit an HR report if used improperly."
+                },
+                {
+                    id: 'c14',
+                    name: "Arasaka 'Whisper' Monowire",
+                    price: "€$ 70,000",
+                    rawPrice: 70000,
+                    description: "Lethal, silent, and retractable. This monomolecular wire is perfect for 'quietly' handling HR issues. Leaves no messy evidence.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/d/d6/NanoWires.png/revision/latest?cb=20230928080643",
+                    sideEffects: "Requires Arasaka firmware. Will not deploy against authorized personnel. May be remotely deactivated if you are fired."
+                },
+                {
+                    id: 'c15',
+                    name: "Arasaka 'Micro-Missile' System",
+                    price: "€$ 82,000",
+                    rawPrice: 82000,
+                    description: "A sleek, concealed, and compatible with Arasaka 'Smart'-guided micro-missiles. For when you need to 'de-escalate' a meeting.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/c/cf/ProjectileLauncher.png/revision/latest?cb=20230928080923",
+                    sideEffects: "Ammunition is subscription-based. Will not fire on 'allied' assets. Explosions are 'clean' and 'efficient'."
+                },
+                {
+                    id: 'c16',
+                    name: "Arasaka 'Aegis' Skeleton",
+                    price: "€$ 65,000",
+                    rawPrice: 65000,
+                    description: "Subtle, lightweight, and incredibly strong carbon-fiber and titanium-laced bone structure. The best money can buy.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/4/49/TitaniumInfusedBones.png/revision/latest?cb=20230928113307",
+                    sideEffects: "Requires Arasaka firmware. Biometrics are constantly monitored. May be remotely 'braced' (i.e., locked) for non-compliance."
+                },
+                {
+                    id: 'c17',
+                    name: "Arasaka 'Myo-Servos'",
+                    price: "€$ 62,000",
+                    rawPrice: 62000,
+                    description: "Corporate-grade myomer-laced tendons. Provides silent, powerful, and precise motor control. Approved for executive use.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/6/65/JenkinsTendons.png/revision/latest?cb=20230926081535",
+                    sideEffects: "Requires Arasaka firmware. Biometric feedback is sent to HR. Any 'unauthorized' exertion will be logged."
+                },
+                {
+                    id: 'c18',
+                    name: "Arasaka 'Swift-Step' Actuators",
+                    price: "€$ 58,000",
+                    rawPrice: 58000,
+                    description: "Silent, high-tension myomer actuators for the ankles. Allows for silent landings, faster movement, and a 'power jump' (subscription required).",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/9/96/ReinforcedMuscles.png/revision/latest?cb=20230926075549",
+                    sideEffects: "Requires Arasaka firmware. 'Power jump' feature is pay-per-use. All movements are logged for 'performance review'."
+                },
+                {
+                    id: 'c19',
+                    name: "Arasaka 'Phoenix' System",
+                    price: "€$ 120,000",
+                    rawPrice: 120000,
+                    description: "Corporate-mandated survival. If biometrics flatline, the 'Phoenix' restarts all vital systems and auto-injects stimulants. Failure is not an option.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/1/1e/SecondHeart.png/revision/latest?cb=20230929160656",
+                    sideEffects: "Requires Arasaka firmware. Incident is immediately reported to your manager. Stimulants are highly addictive."
+                },
+                {
+                    id: 'c20',
+                    name: "Arasaka 'Oni' Subdermal Weave",
+                    price: "€$ 115,000",
+                    rawPrice: 115000,
+                    description: "Top-of-the-line, nanite-infused plating. Flexible, resilient, and completely invisible. Executive protection.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/a/ab/NanoTechPlates.png/revision/latest?cb=20230929180320",
+                    sideEffects: "Requires Arasaka firmware. Constantly monitors biometrics for 'damage reports'. Any impacts are logged."
+                },
+                {
+                    id: 'c21',
+                    name: "Arasaka 'Synergy' RAM Optimizer",
+                    price: "€$ 55,000",
+                    rawPrice: 55000,
+                    description: "Corporate-grade RAM management. Dynamically allocates resources for maximum efficiency during 'mission-critical' operations. Requires Arasaka firmware.",
+                    image: "https://static.wikia.nocookie.net/cyberpunk/images/d/df/CamilloRamManager.png/revision/latest/scale-to-width-down/64?cb=20230925174523",
+                    sideEffects: "Requires Arasaka firmware. Will de-allocate RAM from 'non-essential' processes (e.g., life support). All RAM usage is logged for review."
+                }
+            ]
+        };
+
+        // --- SCRIPT LOGIC ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- STATE ---
+            let cart = [];
+            let userBalance = 0;
+            let currentUser = null; // 'v' or 'guest'
+            let currentPath = null;
+            let notificationTimeout;
+
+            // --- PROFILES ---
+            const profiles = {
+                v: {
+                    name: "V",
+                    image: "https://i.redd.it/pvhto41r1mlc1.png",
+                    rep: "HEYWOOD (RISING)",
+                    balance: 1200,
+                    ware: ["Kiroshi Optics (Mk.I)", "Ballistic Coprocessor"],
+                    lastVisit: "2077-10-29"
+                },
+                guest: {
+                    name: "GUEST",
+                    image: "https://placehold.co/200x200/333/FFF?text=GUEST",
+                    rep: "N/A (UNAUTHENTICATED)",
+                    balance: 500, // Guests get some starting cash
+                    ware: [],
+                    lastVisit: "N/A"
+                }
+            };
+            
+            // --- ELEMENTS ---
+            const productList = document.getElementById('product-list');
+            const lifepathSelector = document.getElementById('lifepath-selector');
+            const productGrid = document.getElementById('product-grid');
+            const shopTitle = document.getElementById('shop-title');
+            const backButton = document.getElementById('back-button');
+            const cartButton = document.getElementById('cart-button');
+            const cartModal = document.getElementById('cart-modal');
+            const closeCartButton = document.getElementById('close-cart-button');
+            const cartItemsList = document.getElementById('cart-items-list');
+            const cartTotal = document.getElementById('cart-total');
+            const cartCount = document.getElementById('cart-count');
+            const clearCartButton = document.getElementById('clear-cart-button');
+            const checkoutButton = document.getElementById('checkout-button');
+            const notificationToast = document.getElementById('notification-toast');
+
+            // Sign-in Modal Elements
+            const signinModal = document.getElementById('signin-modal');
+            const loadProfileVButton = document.getElementById('load-profile-v');
+            const continueAsGuestButton = document.getElementById('continue-as-guest');
+            const header = document.querySelector('header');
+            const main = document.querySelector('main');
+            
+            // Profile Modal Elements
+            const profileButton = document.getElementById('profile-button');
+            const profileModal = document.getElementById('profile-modal');
+            const closeProfileButton = document.getElementById('close-profile-button');
+            const profileImage = document.getElementById('profile-image');
+            const profileUserName = document.getElementById('profile-user-name');
+            const profileRepInput = document.getElementById('profile-rep-input');
+            const profileBalanceInput = document.getElementById('profile-balance-input');
+            const profileBalanceContainer = document.getElementById('profile-balance-container');
+            const profileNotableWare = document.getElementById('profile-notable-ware');
+            const profileLastVisit = document.getElementById('profile-last-visit');
+            const signOutButton = document.getElementById('sign-out-button');
+            
+            // --- FUNCTIONS ---
+            
+            // Function to show a notification
+            function showNotification(message, duration = 3000, isError = false) {
+                if (notificationTimeout) {
+                    clearTimeout(notificationTimeout);
+                }
+                const borderColor = isError ? 'border-red-500' : 'border-green-500';
+                const bgColor = isError ? 'bg-red-800' : 'bg-green-800';
+                const textColor = isError ? 'text-red-100' : 'text-green-100';
+
+                notificationToast.innerHTML = `<div class="glitch-border ${borderColor} ${bgColor} ${textColor} font-orbitron p-4 rounded-lg shadow-lg">${message}</div>`;
+                notificationToast.classList.remove('hidden');
+                
+                notificationTimeout = setTimeout(() => {
+                    notificationToast.classList.add('hidden');
+                }, duration);
+            }
+
+            // Function to create a product card
+            function createProductCard(product, path) {
+                return `
+                    <div class="product-card rounded-lg overflow-hidden flex flex-col">
+                        <div class="img-container h-48 w-full overflow-hidden bg-black">
+                            <img src="${product.image}" alt="${product.name}" class="w-full h-full object-contain" onerror="this.src='https://placehold.co/600x400/333/FFF?text=IMAGE_CORRUPTED'">
+                        </div>
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="font-orbitron text-2xl mb-2">${product.name}</h3>
+                            <p class="text-gray-300 mb-4 flex-grow">${product.description}</p>
+                            <p class="side-effect mb-4">!! SIDE EFFECTS: ${product.sideEffects}</p>
+                            <div class="flex justify-between items-center mt-auto">
+                                <span class="price text-left">${product.price}</span>
+                                <button class="add-to-cart-button glitch-border font-orbitron text-sm px-4 py-2 bg-black bg-opacity-50 hover:bg-opacity-100 text-cyan-400 hover:text-white"
+                                    data-id="${product.id}" 
+                                    data-path="${path}">
+                                    + ADD
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Function to show products
+            function showProducts(path) {
+                currentPath = path; // Store the current path
+                const pathProducts = products[path];
+                let title = "// UNKNOWN INVENTORY //";
+                if (path === 'nomad') title = "// SALVAGED GEAR //";
+                if (path === 'streetkid') title = "// HEYWOOD 'IMPORTS' //";
+                if (path === 'corpo') title = "// ARASAKA-GRADE //";
+
+                shopTitle.innerText = title;
+                productList.innerHTML = ''; // Clear previous products
+                pathProducts.forEach(product => {
+                    productList.innerHTML += createProductCard(product, path);
+                });
+                
+                // Add event listeners for the new "Add to Cart" buttons
+                document.querySelectorAll('.add-to-cart-button').forEach(button => {
+                    button.addEventListener('click', () => {
+                        const id = button.dataset.id;
+                        const path = button.dataset.path;
+                        const product = products[path].find(p => p.id === id);
+                        if (product) {
+                            addItemToCart(product);
+                        }
+                    });
+                });
+
+                // Switch views
+                lifepathSelector.classList.add('hidden');
+                productGrid.classList.remove('hidden');
+            }
+
+            // Function to go back to lifepath selector
+            function showLifepathSelector() {
+                productGrid.classList.add('hidden');
+                lifepathSelector.classList.remove('hidden');
+                currentPath = null;
+            }
+            
+            // --- PROFILE FUNCTIONS ---
+            function updateProfileModal() {
+                if (!currentUser) return;
+                
+                const profile = profiles[currentUser];
+                profileImage.src = profile.image;
+                profileImage.onerror = () => profileImage.src = 'https://placehold.co/200x200/333/FFF?text=USER';
+                profileUserName.innerText = profile.name;
+
+                if (currentUser === 'guest') {
+                    profileRepInput.value = profile.rep;
+                    profileRepInput.disabled = true;
+                    userBalance = profile.balance; // Guests have a fixed balance
+                    profileBalanceInput.value = userBalance;
+                    profileBalanceInput.disabled = true;
+                    
+                    profileBalanceContainer.classList.remove('hidden'); // Guests can see balance
+                    profileNotableWare.classList.add('hidden');
+                    profileLastVisit.classList.add('hidden');
+                } else { // User is 'v'
+                    profileRepInput.value = localStorage.getItem('vRep') || profile.rep;
+                    profileRepInput.disabled = false;
+                    userBalance = parseInt(localStorage.getItem('vBalance')) || profile.balance;
+                    profileBalanceInput.value = userBalance;
+                    profileBalanceInput.disabled = false;
+
+                    profileBalanceContainer.classList.remove('hidden');
+                    profileNotableWare.classList.remove('hidden');
+                    profileLastVisit.classList.remove('hidden');
+                    profileNotableWare.querySelector('p:first-of-type').innerText = profile.ware[0] || "None";
+                    profileNotableWare.querySelector('p:last-of-type').innerText = profile.ware[1] || "";
+                    profileLastVisit.querySelector('p').innerText = profile.lastVisit;
+                }
+            }
+            
+            function loadProfileV() {
+                currentUser = 'v';
+                userBalance = parseInt(localStorage.getItem('vBalance')) || profiles.v.balance;
+                signIn();
+            }
+
+            function continueAsGuest() {
+                currentUser = 'guest';
+                userBalance = profiles.guest.balance;
+                signIn();
+            }
+
+            function signIn() {
+                signinModal.classList.add('hidden');
+                header.classList.remove('hidden');
+                main.classList.remove('hidden');
+                document.body.classList.remove('modal-open');
+                updateProfileModal();
+            }
+
+            function signOut() {
+                header.classList.add('hidden');
+                main.classList.add('hidden');
+                productGrid.classList.add('hidden');
+                lifepathSelector.classList.remove('hidden');
+                signinModal.classList.remove('hidden');
+                
+                // Save V's info if they were logged in
+                if (currentUser === 'v') {
+                    localStorage.setItem('vRep', profileRepInput.value);
+                    localStorage.setItem('vBalance', userBalance.toString());
+                }
+
+                currentUser = null;
+                cart = [];
+                updateCart();
+                
+                // Ensure modals are closed and scroll lock is on for the sign-in modal
+                closeCart();
+                closeProfile();
+                document.body.classList.add('modal-open');
+            }
+
+            function openProfile() {
+                updateProfileModal(); // Ensure profile is up-to-date when opened
+                profileModal.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+            }
+            
+            function closeProfile() {
+                if (profileModal.classList.contains('hidden')) return; // Already closed
+                
+                profileModal.classList.add('hidden');
+                // Only remove modal-open if another modal isn't open
+                if (cartModal.classList.contains('hidden') && signinModal.classList.contains('hidden')) {
+                    document.body.classList.remove('modal-open');
+                }
+                
+                // Save changes on close if user is V
+                if (currentUser === 'v') {
+                    localStorage.setItem('vRep', profileRepInput.value);
+                    localStorage.setItem('vBalance', userBalance.toString());
+                }
+            }
+            
+            // --- CART FUNCTIONS ---
+            function addItemToCart(item) {
+                // Check if item is already in cart
+                const existingItem = cart.find(cartItem => cartItem.id === item.id);
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({ ...item, quantity: 1 });
+                }
+                updateCart();
+                showNotification(`Added: ${item.name}`);
+            }
+
+            function getCartTotal() {
+                return cart.reduce((sum, item) => sum + (item.rawPrice * item.quantity), 0);
+            }
+
+            function updateCart() {
+                // Update cart items list
+                if (cart.length === 0) {
+                    cartItemsList.innerHTML = '<p class="text-gray-500 text-center">Your cart is empty, choom.</p>';
+                } else {
+                    cartItemsList.innerHTML = cart.map(item => `
+                        <div class="flex justify-between items-center text-white mb-4 p-2 bg-gray-900 rounded">
+                            <div>
+                                <p class="font-orbitron">${item.name}</p>
+                                <p class="text-gray-400 text-sm"> (x${item.quantity})</p>
+                            </div>
+                            <span class="text-green-400">€$ ${(item.rawPrice * item.quantity).toLocaleString('en-US')}</span>
+                        </div>
+                    `).join('');
+                }
+
+                // Update cart total
+                const total = getCartTotal();
+                cartTotal.innerText = `€$ ${total.toLocaleString('en-US')}`;
+
+                // Update cart count
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                cartCount.innerText = totalItems;
+                cartCount.classList.toggle('hidden', totalItems === 0);
+            }
+
+            function openCart() {
+                updateCart();
+                cartModal.classList.remove('hidden');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeCart() {
+                if (cartModal.classList.contains('hidden')) return; // Already closed
+
+                cartModal.classList.add('hidden');
+                // Only remove modal-open if another modal isn't open
+                if (profileModal.classList.contains('hidden') && signinModal.classList.contains('hidden')) {
+                    document.body.classList.remove('modal-open');
+                }
+            }
+
+            function clearCart() {
+                cart = [];
+                updateCart();
+                showNotification("Cart cleared.");
+            }
+
+            // --- EVENT LISTENERS ---
+            
+            // Sign-in
+            loadProfileVButton.addEventListener('click', loadProfileV);
+            continueAsGuestButton.addEventListener('click', continueAsGuest);
+            signOutButton.addEventListener('click', signOut);
+
+            // Lifepath Selection
+            document.querySelectorAll('.lifepath-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    showProducts(card.dataset.path);
+                });
+            });
+
+            // Back Button
+            backButton.addEventListener('click', showLifepathSelector);
+            
+            // Profile Modal
+            profileButton.addEventListener('click', openProfile);
+            closeProfileButton.addEventListener('click', closeProfile);
+
+            // Profile Input Listeners
+            profileRepInput.addEventListener('change', (e) => {
+                if (currentUser === 'v') {
+                    localStorage.setItem('vRep', e.target.value);
+                }
+            });
+
+            profileBalanceInput.addEventListener('change', (e) => {
+                const newBalance = parseInt(e.target.value);
+                if (!isNaN(newBalance)) {
+                    userBalance = newBalance;
+                    if (currentUser === 'v') {
+                        localStorage.setItem('vBalance', userBalance.toString());
+                    }
+                }
+                profileBalanceInput.value = userBalance; // Re-format in case of bad input
+            });
+
+            // Cart Modal
+            cartButton.addEventListener('click', openCart);
+            closeCartButton.addEventListener('click', closeCart);
+            clearCartButton.addEventListener('click', clearCart);
+            
+            checkoutButton.addEventListener('click', () => {
+                const totalCost = getCartTotal();
+
+                if (totalCost === 0) {
+                    showNotification("Viktor's Neural Link: 'Nothin' in the cart, choom.'", 3000, true);
+                    return;
+                }
+
+                if (totalCost > userBalance) {
+                    // Lore-accurate error message
+                    showNotification(`Viktor's Terminal: // INSUFFICIENT FUNDS // Eddies Required: €$${totalCost.toLocaleString()}`, 4000, true);
+                } else {
+                    // Success
+                    userBalance -= totalCost; // Deduct from balance
+                    profileBalanceInput.value = userBalance; // Update profile input
+                    if (currentUser === 'v') {
+                        localStorage.setItem('vBalance', userBalance.toString());
+                    }
+                    
+                    showNotification(`Viktor's Terminal: // PAYMENT ACCEPTED // €$${totalCost.toLocaleString()} deducted. Thanks, choom. Sending you back...`, 3000);
+                    clearCart();
+                    closeCart();
+                    
+                    // Add a delay before redirecting to home
+                    setTimeout(() => {
+                        showLifepathSelector();
+                    }, 3000); // Match notification duration
+                }
+            });
+            
+            // --- INITIALIZATION ---
+            document.body.classList.add('modal-open'); // Start with sign-in modal open
+            updateCart(); // Initialize cart display (0 items)
+            
+        });
+    </script>
+</body>
+</html>
